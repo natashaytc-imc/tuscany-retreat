@@ -100,6 +100,34 @@ document.addEventListener('DOMContentLoaded', function() {
         backgroundMusic.addEventListener('pause', updateMusicIcon);
     }
 
+    // 照片滾動提示控制
+    const villaScrollContainers = document.querySelectorAll('.villa-scroll-container');
+    villaScrollContainers.forEach(container => {
+        const hint = container.parentElement.querySelector('.scroll-hint');
+        if (hint) {
+            let hasScrolled = false;
+            
+            // 監聽滾動事件
+            container.addEventListener('scroll', function() {
+                if (!hasScrolled) {
+                    hasScrolled = true;
+                    hint.style.opacity = '0';
+                    hint.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        hint.style.display = 'none';
+                    }, 300);
+                }
+            }, { passive: true });
+            
+            // 監聽觸摸開始（移動設備）
+            container.addEventListener('touchstart', function() {
+                if (!hasScrolled) {
+                    hint.style.opacity = '0.5';
+                }
+            }, { passive: true });
+        }
+    });
+
     // 表單提交處理
     form.addEventListener('submit', function(e) {
         e.preventDefault();
