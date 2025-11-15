@@ -37,30 +37,130 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 收集表單數據
-        const formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            hasCompanion: document.querySelector('input[name="hasCompanion"]:checked').value,
-            guestCount: guestCountSelect.value || null,
-            stayAtVilla: document.querySelector('input[name="stayAtVilla"]:checked').value,
-            dietary: Array.from(document.querySelectorAll('input[name="dietary"]:checked')).map(cb => cb.value),
-            optionalActivities: Array.from(document.querySelectorAll('input[name="optionalActivities"]:checked')).map(cb => cb.value),
-            specialRequests: document.getElementById('specialRequests').value,
-            message: document.getElementById('message').value,
-            submittedAt: new Date().toISOString()
-        };
+        // 處理複選框數據 - 將多個選項組合成字符串
+        const dietaryChecked = Array.from(document.querySelectorAll('input[name="dietary"]:checked')).map(cb => {
+            const labels = {
+                'vegetarian': '素食',
+                'vegan': '全素',
+                'allergy': '過敏'
+            };
+            return labels[cb.value] || cb.value;
+        });
+        
+        const optionalActivitiesChecked = Array.from(document.querySelectorAll('input[name="optionalActivities"]:checked')).map(cb => {
+            const labels = {
+                'pasta-class': 'Pasta Class',
+                'tiramisu-class': 'Tiramisu Class',
+                'wine-tasting': 'Wine Tasting'
+            };
+            return labels[cb.value] || cb.value;
+        });
 
-        // 這裡可以將數據發送到服務器
-        // 目前先顯示在控制台和成功訊息
-        console.log('表單數據:', formData);
+        // 確保單選按鈕的值被正確包含
+        const hasCompanionChecked = document.querySelector('input[name="hasCompanion"]:checked');
+        const stayAtVillaChecked = document.querySelector('input[name="stayAtVilla"]:checked');
+        
+        if (!hasCompanionChecked || !stayAtVillaChecked) {
+            alert('請完成所有必填欄位');
+            return;
+        }
 
-        // 顯示成功訊息
-        form.style.display = 'none';
-        successMessage.style.display = 'block';
+        // 為 Formspree 添加格式化的數據
+        if (dietaryChecked.length > 0) {
+            const dietaryInput = document.createElement('input');
+            dietaryInput.type = 'hidden';
+            dietaryInput.name = 'dietary';
+            dietaryInput.value = dietaryChecked.join('、');
+            form.appendChild(dietaryInput);
+        } else {
+            // 即使沒有選擇，也添加空值
+            const dietaryInput = document.createElement('input');
+            dietaryInput.type = 'hidden';
+            dietaryInput.name = 'dietary';
+            dietaryInput.value = '';
+            form.appendChild(dietaryInput);
+        }
 
-        // 可以選擇將數據發送到後端 API
-        // sendToServer(formData);
+        if (optionalActivitiesChecked.length > 0) {
+            const activitiesInput = document.createElement('input');
+            activitiesInput.type = 'hidden';
+            activitiesInput.name = 'optionalActivities';
+            activitiesInput.value = optionalActivitiesChecked.join('、');
+            form.appendChild(activitiesInput);
+        } else {
+            const activitiesInput = document.createElement('input');
+            activitiesInput.type = 'hidden';
+            activitiesInput.name = 'optionalActivities';
+            activitiesInput.value = '';
+            form.appendChild(activitiesInput);
+        }
+
+        // 添加提交時間
+        const submittedAtInput = document.createElement('input');
+        submittedAtInput.type = 'hidden';
+        submittedAtInput.name = 'submittedAt';
+        submittedAtInput.value = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+        form.appendChild(submittedAtInput);
+
+        // 格式化單選按鈕的值（用於更清晰的顯示）
+        const hasCompanionFormatted = document.createElement('input');
+        hasCompanionFormatted.type = 'hidden';
+        hasCompanionFormatted.name = '是否攜伴';
+        hasCompanionFormatted.value = hasCompanionChecked.value === 'yes' ? '是，我會攜伴' : '否，我一個人參加';
+        form.appendChild(hasCompanionFormatted);
+
+        const stayAtVillaFormatted = document.createElement('input');
+        stayAtVillaFormatted.type = 'hidden';
+        stayAtVillaFormatted.name = '是否同住Villa';
+        stayAtVillaFormatted.value = stayAtVillaChecked.value === 'yes' ? '是，我會與你們同住' : '否，我會自行安排住宿';
+        form.appendChild(stayAtVillaFormatted);
+
+        // 創建 FormData 並提交到 Formspree
+        const formData = new FormData(form);
+        
+        // 調試：顯示將要提交的數據
+        console.log('準備提交的表單數據:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key + ':', value);
+        }
+        
+        // 提交到 Formspree
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log('Formspree 回應狀態:', response.status);
+            if (response.ok) {
+                return response.json().then(data => {
+                    console.log('Formspree 回應數據:', data);
+                    // 顯示成功訊息
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                });
+            } else {
+                return response.json().then(data => {
+                    console.error('Formspree 錯誤回應:', data);
+                    if (data.errors) {
+                        console.error('表單錯誤:', data.errors);
+                        alert('表單提交失敗：' + JSON.stringify(data.errors));
+                    } else {
+                        alert('表單提交失敗，狀態碼：' + response.status);
+                    }
+                }).catch(err => {
+                    console.error('解析錯誤回應失敗:', err);
+                    alert('表單提交失敗，請檢查控制台');
+                });
+            }
+        })
+        .catch(error => {
+            console.error('提交錯誤:', error);
+            console.error('錯誤詳情:', error.message);
+            alert('表單提交失敗，請檢查瀏覽器控制台（F12）查看詳細錯誤');
+        });
     });
 
     // 重置表單時隱藏成功訊息
