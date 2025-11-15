@@ -252,8 +252,8 @@ main {
 
 .gallery-card img {
     width: 100%;
-    height: clamp(280px, 40vw, 520px);
-    object-fit: cover;
+    height: clamp(400px, 60vw, 700px);
+    object-fit: contain;
     display: block;
 }
 
@@ -354,6 +354,49 @@ main {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
+}
+
+.villa-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--tuscany-terracotta) var(--tuscany-cream);
+    border-radius: 12px;
+}
+
+.villa-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.villa-scroll-container::-webkit-scrollbar-track {
+    background: var(--tuscany-cream);
+    border-radius: 4px;
+}
+
+.villa-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--tuscany-terracotta);
+    border-radius: 4px;
+}
+
+.villa-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--tuscany-clay);
+}
+
+.villa-scroll-track {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 8px;
+}
+
+.villa-scroll-track img {
+    flex-shrink: 0;
+    width: 300px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(193, 122, 79, 0.15);
 }
 
 .map-photos img {
@@ -793,6 +836,11 @@ footer .btn-link {
     .map-photos {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+
+    .villa-scroll-track img {
+        width: 400px;
+        height: 300px;
     }
 
     .map-photos img {
