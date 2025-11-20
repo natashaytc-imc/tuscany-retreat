@@ -72,33 +72,46 @@
             <div class="section-content">
                 <p class="section-eyebrow">Our Moments</p>
                 <h2>婚紗花絮</h2>
-                <p>滑動瀏覽幾張我們最喜歡的照片，與我們一起走過美好的旅程。</p>
+                <p>點擊照片可放大瀏覽，與我們一起走過美好的旅程。</p>
 
-                <div class="gallery">
-                    <button class="gallery-btn prev" aria-label="上一張照片">
-                        <span>‹</span>
-                    </button>
-                    <div class="gallery-track-wrapper">
-                        <div class="gallery-track">
-                            <figure class="gallery-card">
-                                <img src="Wedding-1.png" alt="婚紗照">
-                            </figure>
-                            <figure class="gallery-card">
-                                <img src="Wedding-2.png" alt="婚紗照">
-                            </figure>
-                            <figure class="gallery-card">
-                                <img src="Wedding-3.png" alt="婚紗照">
-                            </figure>
-                            <figure class="gallery-card">
-                                <img src="Wedding-4.png" alt="婚紗照">
-                            </figure>
-                        </div>
+                <div class="gallery-grid">
+                    <div class="gallery-item gallery-item-large">
+                        <img src="Natasha and Leo-8.jpg" alt="婚紗照" data-index="0">
                     </div>
-                    <button class="gallery-btn next" aria-label="下一張照片">
-                        <span>›</span>
-                    </button>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-35.jpg" alt="婚紗照" data-index="1">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-42.jpg" alt="婚紗照" data-index="2">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-43.jpg" alt="婚紗照" data-index="3">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-48.jpg" alt="婚紗照" data-index="4">
+                    </div>
+                    <div class="gallery-item gallery-item-large">
+                        <img src="Natasha and Leo-51.jpg" alt="婚紗照" data-index="5">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-76.jpg" alt="婚紗照" data-index="6">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-105.jpg" alt="婚紗照" data-index="7">
+                    </div>
+                    <div class="gallery-item gallery-item-large">
+                        <img src="Natasha and Leo-111.jpg" alt="婚紗照" data-index="8">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Natasha and Leo-128.jpg" alt="婚紗照" data-index="9">
+                    </div>
                 </div>
-                <div class="gallery-dots" aria-label="圖片導航"></div>
+
+                <!-- 圖片放大 Modal -->
+                <div id="imageModal" class="image-modal" style="display: none;">
+                    <span class="modal-close">&times;</span>
+                    <img class="modal-content" id="modalImage" src="" alt="婚紗照">
+                </div>
             </div>
         </section>
 

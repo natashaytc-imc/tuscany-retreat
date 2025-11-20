@@ -324,86 +324,48 @@ document.addEventListener('DOMContentLoaded', function() {
         if (countdownTargets.seconds) countdownTargets.seconds.textContent = String(seconds).padStart(2, '0');
     }, 1000);
 
-    // 圖片滑動效果
-    const galleryTrack = document.querySelector('.gallery-track');
-    const galleryWrapper = document.querySelector('.gallery-track-wrapper');
-    const galleryCards = document.querySelectorAll('.gallery-card');
-    const galleryDotsContainer = document.querySelector('.gallery-dots');
-    const prevBtn = document.querySelector('.gallery-btn.prev');
-    const nextBtn = document.querySelector('.gallery-btn.next');
-    let currentSlide = 0;
+    // 圖片點擊放大功能
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalClose = document.querySelector('.modal-close');
+    const galleryItems = document.querySelectorAll('.gallery-item img');
 
-    if (galleryTrack && galleryWrapper && galleryCards.length > 0) {
-        let slideWidth = galleryWrapper.offsetWidth;
-
-        const updateDots = () => {
-            const dots = galleryDotsContainer?.querySelectorAll('button');
-            dots?.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-        };
-
-        const goToSlide = (targetIndex) => {
-            const total = galleryCards.length;
-            currentSlide = (targetIndex + total) % total;
-            const offset = currentSlide * slideWidth;
-            galleryTrack.style.transform = `translateX(-${offset}px)`;
-            updateDots();
-        };
-
-        const createDots = () => {
-            if (!galleryDotsContainer) return;
-            galleryDotsContainer.innerHTML = '';
-            galleryCards.forEach((_, index) => {
-                const dot = document.createElement('button');
-                dot.type = 'button';
-                dot.setAttribute('aria-label', `前往第 ${index + 1} 張照片`);
-                dot.addEventListener('click', () => {
-                    goToSlide(index);
-                    resetAutoPlay();
-                });
-                if (index === 0) dot.classList.add('active');
-                galleryDotsContainer.appendChild(dot);
-            });
-        };
-
-        createDots();
-
-        function nextSlide() {
-            goToSlide(currentSlide + 1);
-        }
-
-        function prevSlide() {
-            goToSlide(currentSlide - 1);
-        }
-
-        nextBtn?.addEventListener('click', () => {
-            nextSlide();
-            resetAutoPlay();
+    // 點擊圖片放大
+    galleryItems.forEach((img, index) => {
+        img.addEventListener('click', function() {
+            modalImage.src = this.src;
+            modalImage.alt = this.alt;
+            imageModal.style.display = 'flex';
+            imageModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滾動
         });
-        prevBtn?.addEventListener('click', () => {
-            prevSlide();
-            resetAutoPlay();
-        });
+    });
 
-        window.addEventListener('resize', () => {
-            slideWidth = galleryWrapper.offsetWidth;
-            goToSlide(currentSlide);
-        });
-
-        let autoPlay = setInterval(nextSlide, 6000);
-
-        function resetAutoPlay() {
-            clearInterval(autoPlay);
-            autoPlay = setInterval(nextSlide, 6000);
-        }
-
-        galleryTrack.addEventListener('touchstart', resetAutoPlay, { passive: true });
-        galleryTrack.addEventListener('mouseenter', () => clearInterval(autoPlay));
-        galleryTrack.addEventListener('mouseleave', resetAutoPlay);
-
-        goToSlide(0);
+    // 關閉 Modal
+    function closeModal() {
+        imageModal.style.display = 'none';
+        imageModal.classList.remove('active');
+        document.body.style.overflow = ''; // 恢復滾動
     }
+
+    // 點擊關閉按鈕
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+
+    // 點擊背景關閉
+    imageModal.addEventListener('click', function(e) {
+        if (e.target === imageModal || e.target.classList.contains('image-modal')) {
+            closeModal();
+        }
+    });
+
+    // ESC 鍵關閉
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
 
 
     // 可以添加更多驗證邏輯
