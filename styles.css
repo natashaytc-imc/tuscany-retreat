@@ -345,13 +345,14 @@ main {
 .image-modal {
     display: none;
     position: fixed;
-    z-index: 99999;
+    z-index: 999999;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.95);
     animation: fadeIn 0.3s ease;
     overflow: auto;
+    pointer-events: auto;
 }
 
 .image-modal.active {
@@ -367,7 +368,7 @@ main {
     border-radius: 8px;
     animation: zoomIn 0.3s ease;
     position: relative;
-    z-index: 100001;
+    z-index: 1000001;
 }
 
 @keyframes zoomIn {
@@ -382,14 +383,14 @@ main {
 }
 
 .modal-close {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 40px;
     color: white;
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
-    z-index: 100000;
+    z-index: 1000000;
     transition: opacity 0.3s ease;
     line-height: 1;
 }
